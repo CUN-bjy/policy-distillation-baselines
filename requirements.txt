@@ -1,0 +1,14 @@
+gym
+tensorboardX
+torch
+ray
+stable-baselines3[extra,tests,docs]>=1.0
+box2d-py==2.3.8
+pybullet
+gym-minigrid
+scikit-optimize
+optuna
+pytablewriter
+seaborn
+pyyaml>=5.1
+sb3-contrib>=1.0
