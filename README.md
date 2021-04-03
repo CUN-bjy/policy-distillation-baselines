@@ -1,6 +1,6 @@
 # policy-distillation-for-control
 
-Pytorch Implementation of Policy Distillation
+Pytorch Implementation of Policy Distillation for control, which has well-trained teachers via stable_baseline3.
 
 
 
