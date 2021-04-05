@@ -22,7 +22,8 @@ if ros_pack_path in sys.path: sys.path.remove(ros_pack_path)
 ################################################################
 
 
-def main(env_id,algo,folder,n_timesteps):
+def load_env_and_model(env_id,algo,folder,n_timesteps):
+    # get experiment id
     exp_id = get_latest_run_id(os.path.join(folder, algo), env_id)
     print(f"Loading latest experiment, id={exp_id}")
 
@@ -34,6 +35,7 @@ def main(env_id,algo,folder,n_timesteps):
 
     assert os.path.isdir(log_path), f"The {log_path} folder was not found"
 
+    # check & take get the model_path
     found = False
     for ext in ["zip"]:
         model_path = os.path.join(log_path, f"{env_id}.{ext}")
@@ -44,8 +46,10 @@ def main(env_id,algo,folder,n_timesteps):
     if not found:
         raise ValueError(f"No model found for {algo} on {env_id}, path: {model_path}")
 
+    # set random seed
     set_random_seed(0)
 
+    # get stats_path & hyperparam_path
     stats_path = os.path.join(log_path, env_id)
     hyperparams, stats_path = get_saved_hyperparams(stats_path, norm_reward=False, test_mode=True)
 
@@ -58,6 +62,7 @@ def main(env_id,algo,folder,n_timesteps):
             if loaded_args["env_kwargs"] is not None:
                 env_kwargs = loaded_args["env_kwargs"]
 
+    # make gym environment
     env = create_test_env(
         env_id,
         n_envs=1,
@@ -69,19 +74,23 @@ def main(env_id,algo,folder,n_timesteps):
         env_kwargs=env_kwargs,
     )
 
-    kwargs = dict(seed=0)
     # Dummy buffer size as we don't need memory to enjoy the trained agent
+    kwargs = dict(seed=0)
     kwargs.update(dict(buffer_size=1))
 
-
+    # load pre-trained model
     model = ALGOS[algo].load(model_path, env=env, **kwargs)
+
+
+    return env, model
 
 
 if __name__ == "__main__":
 
+    # key parameters
     env_id = 'AntBulletEnv-v0'
     algo = 'td3'
     folder = "rl-trained-agents"
     n_timesteps = 1000
-
-    main(env_id, algo, folder, n_timesteps)
+    
+    env, teacher = load_env_and_model(env_id, algo, folder, n_timesteps)

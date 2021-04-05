@@ -22,7 +22,6 @@ from utils.utils import *
 import ray
 import envs
 import gym
-from classroom import load_env_and_model
 
 # teacher policy & student policy
 from student import Student
@@ -61,12 +60,20 @@ def main(args):
     num_inputs = dummy_env.observation_space.shape[0]
     num_actions = dummy_env.action_space.shape[0]
     for i in range(args.num_teachers):
-        env_id = 'AntBulletEnv-v0'
-        algo = 'td3'
-        folder = "rl-trained-agents"
-        n_timesteps = 1000
-        
-        env, model = load_env_and_model(env_id, algo, folder, n_timesteps)
+        # load envs
+        env_path = './pretrained_models/{}_{}.pkl'.format(args.env_name, i)
+        if not os.path.isfile(env_path):
+            env_path = './pretrained_models/{}.pkl'.format(args.env_name)
+        with open(env_path, 'rb') as input:
+            env = pickle.load(input)
+        # load policies
+        model = Policy(num_inputs, num_actions, hidden_sizes=(args.hidden_size,) * args.num_layers)
+        file_path = './pretrained_models/{}_{}_pretrain.pth.tar'.format(args.env_name, i)
+        if os.path.isfile(file_path):
+            pretrained_model = torch.load(file_path)
+        else:
+            pretrained_model = torch.load('./pretrained_models/{}_pretrain.pth.tar'.format(args.env_name))
+        model.load_state_dict(pretrained_model['state_dict'])
         envs.append(env)
         teacher_policies.append(model)
     ##########################################
