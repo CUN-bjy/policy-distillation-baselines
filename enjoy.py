@@ -120,9 +120,17 @@ def main(env_id,algo,folder,n_timesteps):
 
 if __name__ == "__main__":
 
-    env_id = 'AntBulletEnv-v0'
-    algo = 'td3'
-    folder = "rl-trained-agents"
-    n_timesteps = 1000
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--env", help="environment ID", type=str, default='AntBulletEnv-v0')
+    parser.add_argument("--algo", help="RL Algorithm", default="td3", type=str, required=False, choices=list(ALGOS.keys()))
+    parser.add_argument("-f", "--folder", help="Log folder", type=str, default="rl-trained-agents")
+    parser.add_argument("-n", "--n-timesteps", help="number of timesteps", default=1000, type=int)
+    args = parser.parse_args()
+
+
+    env_id = args.env #'AntBulletEnv-v0'
+    algo = args.algo #'td3'
+    folder = args.folder #"rl-trained-agents"
+    n_timesteps = args.n_timesteps #1000
     
     main(env_id, algo, folder, n_timesteps)
