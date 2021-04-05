@@ -22,13 +22,7 @@ if ros_pack_path in sys.path: sys.path.remove(ros_pack_path)
 ################################################################
 
 
-def main():
-    env_id = 'AntBulletEnv-v0'
-    algo = 'td3'
-    folder = "rl-trained-agents"
-    n_timesteps = 1000
-
-
+def main(env_id,algo,folder,n_timesteps):
     exp_id = get_latest_run_id(os.path.join(folder, algo), env_id)
     print(f"Loading latest experiment, id={exp_id}")
 
@@ -125,4 +119,10 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+
+    env_id = 'AntBulletEnv-v0'
+    algo = 'td3'
+    folder = "rl-trained-agents"
+    n_timesteps = 1000
+    
+    main(env_id, algo, folder, n_timesteps)
