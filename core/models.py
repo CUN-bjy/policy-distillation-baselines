@@ -1,3 +1,5 @@
+# original : https://github.com/Mee321/policy-distillation
+
 import torch
 import torch.autograd as autograd
 import torch.nn as nn

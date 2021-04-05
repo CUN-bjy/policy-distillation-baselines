@@ -1,3 +1,10 @@
+# original : https://github.com/Mee321/policy-distillation
+
+# ---------------------------------------------
+# Autor : Junyeob Baek, wnsdlqjtm@naver.com
+# ---------------------------------------------
+
+
 # basic utils
 from itertools import count
 from time import time, strftime, localtime
@@ -43,7 +50,10 @@ def main(args):
     exp_date = strftime('%Y.%m.%d', localtime(time()))
     writer = SummaryWriter(log_dir='./exp_data/{}/{}_{}'.format(exp_date, args.env_name, time()))
 
-    # load saved models if args.load_models
+
+    ###########################################
+    # load teacher models
+    ##########################################
     envs = []
     teacher_policies = []
     dummy_env = gym.make(args.env_name)
@@ -66,12 +76,16 @@ def main(args):
         model.load_state_dict(pretrained_model['state_dict'])
         envs.append(env)
         teacher_policies.append(model)
+    ##########################################
 
     teachers = Teacher(envs, teacher_policies, args)
     student = Student(args)
     print('Training student policy...')
     time_beigin = time()
+
+    ################################
     # train student policy
+    ################################
     for iter in count(1):
         if iter % args.sample_interval == 1:
             expert_data, expert_reward = teachers.get_expert_sample()
@@ -90,11 +104,15 @@ def main(args):
             break
     time_train = time() - time_beigin
     print('Training student policy finished, using time {}'.format(time_train))
-    # ray.shutdown()
+    ray.shutdown()
+
 
 if __name__ == '__main__':
     import argparse
 
+    ##########################
+    # Arguments Setting
+    ##########################
     parser = argparse.ArgumentParser(description='Policy distillation')
 
     # Network, env, seed
@@ -139,7 +157,9 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
 
+    ########################
     # Distilling!
+    ########################
     try:
         main(args)
     except Exception as e:

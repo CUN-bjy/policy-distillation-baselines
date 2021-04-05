@@ -1,3 +1,5 @@
+# original : https://github.com/Mee321/policy-distillation
+
 import math
 
 import numpy as np

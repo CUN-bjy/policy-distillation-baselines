@@ -1,3 +1,5 @@
+# original : https://github.com/Mee321/policy-distillation
+
 import torch
 from utils2.torch import to_device
 import numpy as np

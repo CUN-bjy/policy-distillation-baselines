@@ -1,3 +1,9 @@
+# original : https://github.com/DLR-RM/rl-baselines3-zoo
+
+# ---------------------------------------------
+# Autor : Junyeob Baek, wnsdlqjtm@naver.com
+# ---------------------------------------------
+
 import argparse
 import importlib
 import os
@@ -12,6 +18,12 @@ import utils3.import_envs  # noqa: F401 pylint: disable=unused-import
 from utils3 import ALGOS, create_test_env, get_latest_run_id, get_saved_hyperparams
 from utils3.exp_manager import ExperimentManager
 from utils3.utils import StoreDict
+
+################################################################
+# to clear cv2 Import error
+ros_pack_path = '/opt/ros/%s/lib/python2.7/dist-packages'%os.getenv('ROS_DISTRO')
+if ros_pack_path in sys.path: sys.path.remove(ros_pack_path)
+################################################################
 
 
 def main():  # noqa: C901
@@ -54,6 +66,7 @@ def main():  # noqa: C901
         "--env-kwargs", type=str, nargs="+", action=StoreDict, help="Optional keyword argument to pass to the env constructor"
     )
     args = parser.parse_args()
+
 
     # Going through custom gym packages to let them register in the global registory
     for env_module in args.gym_packages:

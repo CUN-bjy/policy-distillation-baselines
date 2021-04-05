@@ -1,3 +1,5 @@
+# original : https://github.com/Mee321/policy-distillation
+
 import multiprocessing as mp
 from torch.distributions.kl import kl_divergence
 from core.models import detach_distribution

@@ -1,3 +1,5 @@
+# original : https://github.com/Mee321/policy-distillation
+
 import numpy as np
 import torch
 from torch.distributions.kl import kl_divergence
