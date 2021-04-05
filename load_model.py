@@ -76,47 +76,6 @@ def main(env_id,algo,folder,n_timesteps):
 
     model = ALGOS[algo].load(model_path, env=env, **kwargs)
 
-    obs = env.reset()
-
-    state = None
-    episode_reward = 0.0
-    episode_rewards, episode_lengths = [], []
-    ep_len = 0
-    # For HER, monitor success rate
-    successes = []
-    try:
-        for _ in range(n_timesteps):
-            action, state = model.predict(obs, state=state, deterministic=True)
-            obs, reward, done, infos = env.step(action)
-            env.render("human")
-
-            episode_reward += reward[0]
-            ep_len += 1
-
-            if done:
-                # NOTE: for env using VecNormalize, the mean reward
-                # is a normalized reward when `--norm_reward` flag is passed
-                print(f"Episode Reward: {episode_reward:.2f}")
-                print("Episode Length", ep_len)
-                episode_rewards.append(episode_reward)
-                episode_lengths.append(ep_len)
-                episode_reward = 0.0
-                ep_len = 0
-                state = None
-
-            # Reset also when the goal is achieved when using HER
-            if done and infos[0].get("is_success") is not None:
-                print("Success?", infos[0].get("is_success", False))
-
-                if infos[0].get("is_success") is not None:
-                    successes.append(infos[0].get("is_success", False))
-                    episode_reward, ep_len = 0.0, 0
-
-    except KeyboardInterrupt:
-        pass
-
-    env.close()
-
 
 if __name__ == "__main__":
 
@@ -124,5 +83,5 @@ if __name__ == "__main__":
     algo = 'td3'
     folder = "rl-trained-agents"
     n_timesteps = 1000
-    
+
     main(env_id, algo, folder, n_timesteps)

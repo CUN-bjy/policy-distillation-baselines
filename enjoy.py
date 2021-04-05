@@ -23,6 +23,7 @@ if ros_pack_path in sys.path: sys.path.remove(ros_pack_path)
 
 
 def main(env_id,algo,folder,n_timesteps):
+    # get experiment id
     exp_id = get_latest_run_id(os.path.join(folder, algo), env_id)
     print(f"Loading latest experiment, id={exp_id}")
 
@@ -34,6 +35,7 @@ def main(env_id,algo,folder,n_timesteps):
 
     assert os.path.isdir(log_path), f"The {log_path} folder was not found"
 
+    # check & take get the model_path
     found = False
     for ext in ["zip"]:
         model_path = os.path.join(log_path, f"{env_id}.{ext}")
@@ -44,8 +46,10 @@ def main(env_id,algo,folder,n_timesteps):
     if not found:
         raise ValueError(f"No model found for {algo} on {env_id}, path: {model_path}")
 
+    # set random seed
     set_random_seed(0)
 
+    # get stats_path & hyperparam_path
     stats_path = os.path.join(log_path, env_id)
     hyperparams, stats_path = get_saved_hyperparams(stats_path, norm_reward=False, test_mode=True)
 
@@ -58,6 +62,7 @@ def main(env_id,algo,folder,n_timesteps):
             if loaded_args["env_kwargs"] is not None:
                 env_kwargs = loaded_args["env_kwargs"]
 
+    # make gym environment
     env = create_test_env(
         env_id,
         n_envs=1,
@@ -69,11 +74,11 @@ def main(env_id,algo,folder,n_timesteps):
         env_kwargs=env_kwargs,
     )
 
-    kwargs = dict(seed=0)
     # Dummy buffer size as we don't need memory to enjoy the trained agent
+    kwargs = dict(seed=0)
     kwargs.update(dict(buffer_size=1))
 
-
+    # load pre-trained model
     model = ALGOS[algo].load(model_path, env=env, **kwargs)
 
     obs = env.reset()
@@ -84,6 +89,8 @@ def main(env_id,algo,folder,n_timesteps):
     ep_len = 0
     # For HER, monitor success rate
     successes = []
+
+    # main loop to enjoy for n_timesteps..
     try:
         for _ in range(n_timesteps):
             action, state = model.predict(obs, state=state, deterministic=True)
@@ -120,6 +127,7 @@ def main(env_id,algo,folder,n_timesteps):
 
 if __name__ == "__main__":
 
+    # arguments setting
     parser = argparse.ArgumentParser()
     parser.add_argument("--env", help="environment ID", type=str, default='AntBulletEnv-v0')
     parser.add_argument("--algo", help="RL Algorithm", default="td3", type=str, required=False, choices=list(ALGOS.keys()))
@@ -127,7 +135,7 @@ if __name__ == "__main__":
     parser.add_argument("-n", "--n-timesteps", help="number of timesteps", default=1000, type=int)
     args = parser.parse_args()
 
-
+    # key parameters
     env_id = args.env #'AntBulletEnv-v0'
     algo = args.algo #'td3'
     folder = args.folder #"rl-trained-agents"
