@@ -64,7 +64,7 @@ class AgentCollection:
         print("collect_samples done")
         return worker_memories, worker_logs
 
-    def get_expert_sample(self, batch_size):
+    def get_expert_sample(self, batch_size, deterministic=True):
         print("get_expert_sample called!!")
         memories, logs = self.collect_samples(batch_size)
         teacher_rewards = [log['avg_reward'] for log in logs if log is not None]
@@ -75,7 +75,6 @@ class AgentCollection:
         for memory, policy in zip(memories, self.policies):
             batch = memory.sample()
             states = torch.from_numpy(np.stack(batch.state)).to(torch.double).to('cpu')
-            means = policy.mean_action(states).detach()
-            stds = policy.get_std(states).detach()
-            dataset += [(state, mean, std) for state, mean, std in zip(states, means, stds)]
+            act_dist = policy.predict(states, deterministic=deterministic)
+            dataset += [(state, act_dist) for state, act_dist in zip(states, act_dist)]
         return dataset, teacher_average_reward

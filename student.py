@@ -12,6 +12,9 @@ import numpy as np
 from utils.torch import *
 from copy import deepcopy
 
+from utils3 import ALGOS
+from stable_baselines3 import MlpPolicy
+
 class Student(object):
     def __init__(self, args, optimizer=None):
         self.env = gym.make(args.env_name)
@@ -20,7 +23,7 @@ class Student(object):
         self.training_batch_size = args.student_batch_size
         self.testing_batch_size = args.testing_batch_size
         self.loss_metric = args.loss_metric
-        self.policy = Policy(num_inputs, num_actions, hidden_sizes=(args.hidden_size,) * args.num_layers)
+        self.policy = ALGOS['td3'](MlpPolicy, self.env)
         self.agents = AgentCollection([self.env], [self.policy], 'cpu', running_state=None, render=args.render,
                                         num_agents=1, num_parallel_workers=1)
         if not optimizer:
