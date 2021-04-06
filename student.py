@@ -7,7 +7,7 @@ import torch
 from torch.autograd import Variable
 import random
 from utils2.math import get_wasserstein, get_kl
-from core.agent_ray_pd import AgentCollection
+from core.agent_pd_baselines import AgentCollection
 import numpy as np
 from utils.torch import *
 from copy import deepcopy

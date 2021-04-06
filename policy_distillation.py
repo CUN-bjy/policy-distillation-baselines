@@ -43,7 +43,7 @@ torch.set_default_dtype(dtype)
 '''
 
 def main(args):
-    ray.init(num_cpus=args.num_workers, num_gpus=1)
+    # ray.init(num_cpus=args.num_workers, num_gpus=1)
 
     # policy and envs for sampling
     np.random.seed(args.seed)
@@ -65,10 +65,10 @@ def main(args):
         algo = 'td3'
         folder = "rl-trained-agents"
         n_timesteps = 1000
-        
+
         env, model = load_env_and_model(env_id, algo, folder, n_timesteps)
         envs.append(env)
-        teacher_policies.append(model)
+        teacher_policies.append(model.actor)
     ##########################################
 
     teachers = Teacher(envs, teacher_policies, args)
@@ -97,7 +97,7 @@ def main(args):
             break
     time_train = time() - time_beigin
     print('Training student policy finished, using time {}'.format(time_train))
-    ray.shutdown()
+    # ray.shutdown()
 
 
 if __name__ == '__main__':
@@ -153,8 +153,8 @@ if __name__ == '__main__':
     ########################
     # Distilling!
     ########################
-    try:
-        main(args)
-    except Exception as e:
-        ray.shutdown()
-        print(e)
+    # try:
+    main(args)
+    # except Exception as e:
+    #     ray.shutdown()
+    #     print(e)

@@ -85,6 +85,52 @@ def load_env_and_model(env_id,algo,folder,n_timesteps):
     return env, model
 
 
+def sample_generator(env, model):
+    obs = env.reset()
+
+    state = None
+    episode_reward = 0.0
+    episode_rewards, episode_lengths = [], []
+    ep_len = 0
+    # For HER, monitor success rate
+    successes = []
+
+    # main loop to enjoy for n_timesteps..
+    try:
+        for _ in range(n_timesteps):
+            action, state = model.predict(obs, state=state, deterministic=True)
+            obs, reward, done, infos = env.step(action)
+            env.render("human")
+
+            episode_reward += reward[0]
+            ep_len += 1
+
+            if done:
+                # NOTE: for env using VecNormalize, the mean reward
+                # is a normalized reward when `--norm_reward` flag is passed
+                print(f"Episode Reward: {episode_reward:.2f}")
+                print("Episode Length", ep_len)
+                episode_rewards.append(episode_reward)
+                episode_lengths.append(ep_len)
+                episode_reward = 0.0
+                ep_len = 0
+                state = None
+
+            # Reset also when the goal is achieved when using HER
+            if done and infos[0].get("is_success") is not None:
+                print("Success?", infos[0].get("is_success", False))
+
+                if infos[0].get("is_success") is not None:
+                    successes.append(infos[0].get("is_success", False))
+                    episode_reward, ep_len = 0.0, 0
+
+    except KeyboardInterrupt:
+        pass
+
+    env.close()
+
+    return memories
+
 if __name__ == "__main__":
 
     # key parameters
@@ -94,3 +140,4 @@ if __name__ == "__main__":
     n_timesteps = 1000
     
     env, teacher = load_env_and_model(env_id, algo, folder, n_timesteps)
+    sample_generator(env, teacher)

@@ -1,6 +1,6 @@
 # original : https://github.com/Mee321/policy-distillation
 
-from core.agent_ray_pd import AgentCollection
+from core.agent_pd_baselines import AgentCollection
 
 
 class Teacher(object):

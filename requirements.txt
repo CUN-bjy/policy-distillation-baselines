@@ -12,3 +12,4 @@ pytablewriter
 seaborn
 pyyaml>=5.1
 sb3-contrib>=1.0
+pickle5
