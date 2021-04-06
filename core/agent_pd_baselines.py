@@ -45,9 +45,7 @@ class AgentCollection:
 
     def collect_samples(self, min_batch_size):
         print("collect_samples called!!")
-        for policy in self.policies:
-            to_device(torch.device('cpu'), policy)
-        result_ids = []
+        results = []
         for i in range(self.num_teachers):
             results.append(sample_generator(self.envs[i], self.policies[i], False, min_batch_size, i))
         worker_logs = [None] * self.num_agents

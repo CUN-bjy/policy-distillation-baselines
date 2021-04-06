@@ -12,8 +12,6 @@ from core.running_state import ZFilter
 @ray.remote
 def collect_samples(pid, env, policy, custom_reward,
                     mean_action, render, running_state, min_batch_size):
-    print("~~~~~~~~~~~~~~~~~~")
-    
     torch.randn(pid)
     log = dict()
     memory = Memory()

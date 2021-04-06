@@ -8,7 +8,7 @@
 # basic utils
 from itertools import count
 from time import time, strftime, localtime
-import os, pickle
+import os
 import numpy as np
 import scipy.optimize
 
@@ -23,6 +23,7 @@ import ray
 import envs
 import gym
 from classroom import load_env_and_model
+from classroom import sample_generator
 
 # teacher policy & student policy
 from student import Student
@@ -31,9 +32,6 @@ from teacher import Teacher
 
 torch.utils.backcompat.broadcast_warning.enabled = True
 torch.utils.backcompat.keepdim_warning.enabled = True
-torch.set_default_tensor_type('torch.DoubleTensor')
-dtype = torch.double
-torch.set_default_dtype(dtype)
 
 '''
 1. train single or multiple teacher policies
@@ -64,9 +62,8 @@ def main(args):
         env_id = 'AntBulletEnv-v0'
         algo = 'td3'
         folder = "rl-trained-agents"
-        n_timesteps = 1000
 
-        env, model = load_env_and_model(env_id, algo, folder, n_timesteps)
+        env, model = load_env_and_model(env_id, algo, folder)
         envs.append(env)
         teacher_policies.append(model)
     ##########################################
