@@ -68,7 +68,7 @@ def main(args):
 
         env, model = load_env_and_model(env_id, algo, folder, n_timesteps)
         envs.append(env)
-        teacher_policies.append(model.actor)
+        teacher_policies.append(model)
     ##########################################
 
     teachers = Teacher(envs, teacher_policies, args)

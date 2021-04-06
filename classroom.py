@@ -4,16 +4,15 @@
 # Autor : Junyeob Baek, wnsdlqjtm@naver.com
 # ---------------------------------------------
 
-import argparse
 import os, sys
 
-import numpy as np
 import torch as th
 import yaml
 from stable_baselines3.common.utils import set_random_seed
 
 import utils3.import_envs  # noqa: F401 pylint: disable=unused-import
 from utils3 import ALGOS, create_test_env, get_latest_run_id, get_saved_hyperparams
+from utils2.replay_memory import Memory
 
 ################################################################
 # to clear cv2 Import error
@@ -85,51 +84,70 @@ def load_env_and_model(env_id,algo,folder,n_timesteps):
     return env, model
 
 
-def sample_generator(env, model):
-    obs = env.reset()
+def sample_generator(env, model, render=True, min_batch_size=10000,id_=0):
+    log = dict()
+    memory = Memory()
 
-    state = None
-    episode_reward = 0.0
-    episode_rewards, episode_lengths = [], []
-    ep_len = 0
-    # For HER, monitor success rate
-    successes = []
-
+    num_steps = 0
+    total_reward = 0
+    min_reward = 1e6
+    max_reward = -1e6
+    num_episodes = 0
+  
     # main loop to enjoy for n_timesteps..
     try:
-        for _ in range(n_timesteps):
-            action, state = model.predict(obs, state=state, deterministic=True)
-            obs, reward, done, infos = env.step(action)
-            env.render("human")
+        while num_steps < min_batch_size: 
+            obs = env.reset()
+            state = None
+            episode_reward = 0.0
+            episode_rewards, episode_lengths = [], []
+            ep_len = 0
 
-            episode_reward += reward[0]
-            ep_len += 1
+            for t in range(n_timesteps):
+                action, state = model.predict(obs, state=state, deterministic=True)
+                next_state, reward, done, _ = env.step(action)
 
-            if done:
-                # NOTE: for env using VecNormalize, the mean reward
-                # is a normalized reward when `--norm_reward` flag is passed
-                print(f"Episode Reward: {episode_reward:.2f}")
-                print("Episode Length", ep_len)
-                episode_rewards.append(episode_reward)
-                episode_lengths.append(ep_len)
-                episode_reward = 0.0
-                ep_len = 0
-                state = None
+                episode_reward += reward[0]
+                ep_len += 1
 
-            # Reset also when the goal is achieved when using HER
-            if done and infos[0].get("is_success") is not None:
-                print("Success?", infos[0].get("is_success", False))
+                if done:
+                    # NOTE: for env using VecNormalize, the mean reward
+                    # is a normalized reward when `--norm_reward` flag is passed
+                    print(f"Episode Reward: {episode_reward:.2f}")
+                    print("Episode Length", ep_len)
+                    episode_rewards.append(episode_reward)
+                    episode_lengths.append(ep_len)
+                    episode_reward = 0.0
+                    ep_len = 0
+                    state = None
 
-                if infos[0].get("is_success") is not None:
-                    successes.append(infos[0].get("is_success", False))
-                    episode_reward, ep_len = 0.0, 0
+                mask = 0 if done else 1
+                memory.push(state, action, mask, next_state, reward)
+                obs = next_state
+
+                if render: 
+                    env.render("human")
+                if done:
+                    break
+            # log stats
+            num_steps += (t + 1)
+            num_episodes += 1
+            total_reward = sum(episode_rewards)
+            min_reward = min(episode_rewards)
+            max_reward = max(episode_rewards)
 
     except KeyboardInterrupt:
         pass
-
     env.close()
 
-    return memories
+    log['num_steps'] = num_steps
+    log['num_episodes'] = num_episodes
+    log['total_reward'] = total_reward
+    log['avg_reward'] = total_reward / num_episodes
+    log['max_reward'] = max_reward
+    log['min_reward'] = min_reward
+
+    return id_, memory, log
 
 if __name__ == "__main__":
 
