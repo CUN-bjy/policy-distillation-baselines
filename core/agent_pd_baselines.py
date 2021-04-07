@@ -10,23 +10,6 @@ import ray
 from core.running_state import ZFilter
 from classroom import sample_generator
 
-def merge_log(log_list):
-    log = dict()
-    log['total_reward'] = sum([x['total_reward'] for x in log_list])
-    log['num_episodes'] = sum([x['num_episodes'] for x in log_list])
-    log['num_steps'] = sum([x['num_steps'] for x in log_list])
-    log['avg_reward'] = log['total_reward'] / log['num_episodes']
-    log['max_reward'] = max([x['max_reward'] for x in log_list])
-    log['min_reward'] = min([x['min_reward'] for x in log_list])
-    if 'total_c_reward' in log_list[0]:
-        log['total_c_reward'] = sum([x['total_c_reward'] for x in log_list])
-        log['avg_c_reward'] = log['total_c_reward'] / log['num_steps']
-        log['max_c_reward'] = max([x['max_c_reward'] for x in log_list])
-        log['min_c_reward'] = min([x['min_c_reward'] for x in log_list])
-
-    return log
-
-
 class AgentCollection:
 
     def __init__(self, envs, policies, device, custom_reward=None,
@@ -56,11 +39,6 @@ class AgentCollection:
             worker_memories[pid] = worker_memory
             worker_logs[pid] = worker_log
 
-
-        # to_device(self.device, self.policies)
-        # log['action_mean'] = np.mean(np.vstack(batch.action), axis=0)
-        # log['action_min'] = np.min(np.vstack(batch.action), axis=0)
-        # log['action_max'] = np.max(np.vstack(batch.action), axis=0)
         print("collect_samples done")
         return worker_memories, worker_logs
 
@@ -74,7 +52,8 @@ class AgentCollection:
         dataset = []
         for memory, policy in zip(memories, self.policies):
             batch = memory.sample()
-            states = torch.from_numpy(np.stack(batch.state)).to(torch.double).to('cpu')
+            batched_state = np.array(batch.state).reshape(-1, policy.env.observation_space.shape[0])
+            states = torch.from_numpy(batched_state).to(torch.double).to('cpu')
             act_dist = policy.predict(states, deterministic=deterministic)
             dataset += [(state, act_dist) for state, act_dist in zip(states, act_dist)]
         return dataset, teacher_average_reward

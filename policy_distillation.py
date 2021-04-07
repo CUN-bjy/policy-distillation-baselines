@@ -55,9 +55,6 @@ def main(args):
     ##########################################
     envs = []
     teacher_policies = []
-    dummy_env = gym.make(args.env_name)
-    num_inputs = dummy_env.observation_space.shape[0]
-    num_actions = dummy_env.action_space.shape[0]
     for i in range(args.num_teachers):
         env_id = 'AntBulletEnv-v0'
         algo = 'td3'

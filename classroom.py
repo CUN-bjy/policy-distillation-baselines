@@ -123,7 +123,7 @@ def sample_generator(env, model, render=True, min_batch_size=10000,id_=0):
                         state = None
 
                     mask = 0 if done else 1
-                    memory.push(state, action, mask, next_state, reward)
+                    memory.push(obs, action, mask, next_state, reward)
                     obs = next_state
 
                     if render: 
