@@ -66,7 +66,7 @@ def main(args):
     ##########################################
 
     teachers = Teacher(envs, teacher_policies, args)
-    student = Student(args)
+    student = Student(envs[0],args)
     print('Training student policy...')
     time_beigin = time()
 

@@ -1,5 +1,9 @@
 # original : https://github.com/Mee321/policy-distillation
 
+# ---------------------------------------------
+# Autor : Junyeob Baek, wnsdlqjtm@naver.com
+# ---------------------------------------------
+
 import gym
 from core.models import *
 from torch.optim import Adam, SGD
@@ -13,8 +17,8 @@ from utils.torch import *
 from copy import deepcopy
 
 class Student(object):
-    def __init__(self, args, optimizer=None):
-        self.env = gym.make(args.env_name)
+    def __init__(self, env, args, optimizer=None):
+        self.env = env
         num_inputs = self.env.observation_space.shape[0]
         num_actions = self.env.action_space.shape[0]
         self.training_batch_size = args.student_batch_size
