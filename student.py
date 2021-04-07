@@ -27,11 +27,11 @@ class Student(object):
             self.optimizer = SGD(self.policy.parameters(), lr=args.lr)
 
     def train(self, expert_data):
-        print(expert_data.shape)
         batch = random.sample(expert_data, self.training_batch_size)
+        print(batch[0])
         states = torch.stack([x[0] for x in batch])
         means_teacher = torch.stack([x[1] for x in batch])
-        stds_teacher = torch.stack([x[2] for x in batch])
+        stds_teacher = torch.stack(torch.from_numpy(np.array([[0]*len(x[1]) for x in batch])))
         means_student = self.policy.mean_action(states)
         stds_student = self.policy.get_std(states)
         if self.loss_metric == 'kl':
