@@ -107,7 +107,7 @@ if __name__ == '__main__':
                         help='number of hidden units per layer')
     parser.add_argument('--num-layers', type=int, default=2,
                         help='number of hidden layers')
-    parser.add_argument('--env-name', default="2DNavigation-v1", metavar='G',
+    parser.add_argument('--env-name', default="'AntBulletEnv-v0'", metavar='G',
                         help='name of the environment to run')
     parser.add_argument('--seed', type=int, default=1, metavar='N',
                         help='random seed (default: 1)')

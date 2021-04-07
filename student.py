@@ -31,7 +31,10 @@ class Student(object):
         print(batch[0])
         states = torch.stack([x[0] for x in batch])
         means_teacher = torch.stack([x[1] for x in batch])
-        stds_teacher = torch.stack(torch.from_numpy(np.array([[0]*len(x[1]) for x in batch])))
+
+        fake_std = torch.from_numpy(np.array([0]*len(means_teacher[0]))) # for deterministic
+        stds_teacher = torch.stack([fake_std for x in batch])
+
         means_student = self.policy.mean_action(states)
         stds_student = self.policy.get_std(states)
         if self.loss_metric == 'kl':
