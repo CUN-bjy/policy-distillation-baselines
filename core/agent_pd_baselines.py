@@ -6,8 +6,6 @@
 
 from utils2.replay_memory import Memory
 from utils2.torch import *
-import ray
-from core.running_state import ZFilter
 from classroom import sample_generator
 
 class AgentCollection:
@@ -26,11 +24,14 @@ class AgentCollection:
         self.num_agents = num_agents
         self.num_teachers = len(policies)
 
-    def collect_samples(self, min_batch_size):
+    def collect_samples(self, min_batch_size, exercise=False):
         # print("collect_samples called!!")
         results = []
         for i in range(self.num_teachers):
-            results.append(sample_generator(self.envs[i], self.policies[i], False, min_batch_size, i))
+            if not exercise:
+                results.append(sample_generator(self.envs[i], self.policies[i], False, min_batch_size, i))
+            else:
+                results.append(self.exercise(self.envs[i], self.policies[i], False, min_batch_size, i))
         worker_logs = [None] * self.num_agents
         worker_memories = [None] * self.num_agents
         # print(len(result_ids))
@@ -57,3 +58,52 @@ class AgentCollection:
             act_dist = torch.from_numpy(policy.predict(states, deterministic=deterministic)[0])
             dataset += [(state, act_dist) for state, act_dist in zip(states, act_dist)]
         return dataset, teacher_average_reward
+
+    def exercise(self, env, policy, render=True, min_batch_size=10000, pid=0):
+        torch.randn(pid)
+        log = dict()
+        memory = Memory()
+        num_steps = 0
+        total_reward = 0
+        min_reward = 1e6
+        max_reward = -1e6
+        num_episodes = 0
+
+        while num_steps < min_batch_size:
+            state = env.reset()
+            reward_episode = 0
+
+            for t in range(10000):
+                state_var = tensor(state).unsqueeze(0)
+                print(state_var)
+                action = policy.mean_action(state_var.to(torch.float)).detach()
+                next_state, reward, done, _ = env.step(action)
+                reward_episode += reward
+
+                print(action)
+                mask = 0 if done else 1
+
+                memory.push(state, action, mask, next_state, reward)
+
+                if render:
+                    env.render()
+                if done:
+                    break
+
+                state = next_state
+
+            # log states
+            num_steps += (t + 1)
+            num_episodes += 1
+            total_reward += reward_episode
+            min_reward = min(min_reward, reward_episode)
+            max_reward = max(max_reward, reward_episode)
+
+        log['num_steps'] = num_steps
+        log['num_episodes'] = num_episodes
+        log['total_reward'] = total_reward
+        log['avg_reward'] = total_reward / num_episodes
+        log['max_reward'] = max_reward
+        log['min_reward'] = min_reward
+
+        return (pid, memory, log)

@@ -8,8 +8,7 @@
 # basic utils
 from itertools import count
 from time import time, strftime, localtime
-import os
-import numpy as np
+import os, numpy as np
 import scipy.optimize
 
 # deeplearning utils
@@ -19,11 +18,8 @@ from core.agent_ray_pd import AgentCollection
 from utils.utils import *
 
 # LDE utils
-import ray
-import envs
 import gym
-from classroom import load_env_and_model
-from classroom import sample_generator
+from classroom import load_env_and_model, sample_generator
 
 # teacher policy & student policy
 from student import Student

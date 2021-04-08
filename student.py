@@ -24,7 +24,7 @@ class Student(object):
         env_id = 'AntBulletEnv-v0'
         algo = 'td3'
         folder = "rl-trained-agents"
-        self.env, model = load_env_and_model(env_id, algo, folder)
+        self.env, _ = load_env_and_model(env_id, algo, folder)
 
         num_inputs = self.env.observation_space.shape[0]
         num_actions = self.env.action_space.shape[0]
@@ -58,7 +58,7 @@ class Student(object):
         return loss
 
     def test(self):
-        memories, logs = self.agents.collect_samples(self.testing_batch_size)
+        memories, logs = self.agents.collect_samples(self.testing_batch_size, exercise=True)
         rewards = [log['avg_reward'] for log in logs]
         average_reward = np.array(rewards).mean()
         return average_reward
