@@ -96,52 +96,50 @@ def sample_generator(env, model, render=True, min_batch_size=10000,id_=0):
   
     # main loop to enjoy for n_timesteps..
     try:
+
+        episode_rewards, episode_lengths = [], []
         while num_steps < min_batch_size: 
-            try:
-                obs = env.reset()
-                state = None
-                episode_reward = 0.0
-                episode_rewards, episode_lengths = [], []
-                ep_len = 0
+            obs = env.reset()
+            state = None
+            episode_reward = 0.0
+            ep_len = 0
 
-                for t in range(1000):
-                    action, state = model.predict(obs, state=state, deterministic=True)
-                    next_state, reward, done, _ = env.step(action)
+            for t in range(1000):
+                action, state = model.predict(obs, state=state, deterministic=True)
+                next_state, reward, done, _ = env.step(action)
 
-                    episode_reward += reward[0]
-                    ep_len += 1
+                episode_reward += reward[0]
+                ep_len += 1
 
-                    if done:
-                        # NOTE: for env using VecNormalize, the mean reward
-                        # is a normalized reward when `--norm_reward` flag is passed
-                        print(f"Episode Reward: {episode_reward:.2f}")
-                        print("Episode Length", ep_len)
-                        episode_rewards.append(episode_reward)
-                        episode_lengths.append(ep_len)
-                        episode_reward = 0.0
-                        ep_len = 0
-                        state = None
+                if done:
+                    # NOTE: for env using VecNormalize, the mean reward
+                    # is a normalized reward when `--norm_reward` flag is passed
+                    print(f"Episode Reward: {episode_reward:.2f}")
+                    print("Episode Length", ep_len)
+                    episode_rewards.append(episode_reward)
+                    episode_lengths.append(ep_len)
+                    episode_reward = 0.0
+                    ep_len = 0
+                    state = None
 
-                    mask = 0 if done else 1
-                    memory.push(obs, action, mask, next_state, reward)
-                    obs = next_state
+                mask = 0 if done else 1
+                memory.push(obs, action, mask, next_state, reward)
+                obs = next_state
 
-                    if render: 
-                        env.render("human")
-                    if done:
-                        break
-                # log stats
-                num_steps += (t + 1)
-                num_episodes += 1
-                total_reward = sum(episode_rewards)
-                min_reward = min(episode_rewards)
-                max_reward = max(episode_rewards)
-            except Exception as e:
-                print("[sample_generator] %s"%e)
+                if render: 
+                    env.render("human")
+                if done:
+                    break
+            # log stats
+            num_steps += (t + 1)
+            num_episodes += 1
+            total_reward = sum(episode_rewards)
+            min_reward = min(episode_rewards)
+            max_reward = max(episode_rewards)
     except KeyboardInterrupt:
         pass
-    env.close()
-
+    # env.close()
+    
     log['num_steps'] = num_steps
     log['num_episodes'] = num_episodes
     log['total_reward'] = total_reward

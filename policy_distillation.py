@@ -82,7 +82,7 @@ def main(args):
             average_reward = student.test()
             writer.add_scalar('Students_average_reward', average_reward, iter)
             writer.add_scalar('teacher_reward', expert_reward, iter)
-            print("Students_average_reward: {:.3f} (teacher_reaward:{:3f})".format(average_reward, expert_reward))
+            print("Students_average_reward: {:.3f} (teacher_reward:{:3f})".format(average_reward, expert_reward))
         if iter > args.num_student_episodes:
             break
     time_train = time() - time_beigin
@@ -123,11 +123,11 @@ if __name__ == '__main__':
     # For Student policy
     parser.add_argument('--lr', type=float, default=1e-3, metavar='G',
                         help='adam learnig rate (default: 1e-3)')
-    parser.add_argument('--test-interval', type=int, default=10, metavar='N',
+    parser.add_argument('--test-interval', type=int, default=20, metavar='N',
                         help='interval between training status logs (default: 10)')
     parser.add_argument('--student-batch-size', type=int, default=1000, metavar='N',
                         help='per-iteration batch size for student (default: 1000)')
-    parser.add_argument('--sample-interval', type=int, default=10, metavar='N',
+    parser.add_argument('--sample-interval', type=int, default=100, metavar='N',
                         help='frequency to update expert data (default: 10)')
     parser.add_argument('--testing-batch-size', type=int, default=5000, metavar='N',
                         help='batch size for testing student policy (default: 10000)')
