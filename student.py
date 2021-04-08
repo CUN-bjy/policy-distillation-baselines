@@ -16,9 +16,16 @@ import numpy as np
 from utils.torch import *
 from copy import deepcopy
 
+from classroom import load_env_and_model
+
 class Student(object):
     def __init__(self, env, args, optimizer=None):
-        self.env = env
+
+        env_id = 'AntBulletEnv-v0'
+        algo = 'td3'
+        folder = "rl-trained-agents"
+        self.env, model = load_env_and_model(env_id, algo, folder)
+
         num_inputs = self.env.observation_space.shape[0]
         num_actions = self.env.action_space.shape[0]
         self.training_batch_size = args.student_batch_size
@@ -32,11 +39,11 @@ class Student(object):
 
     def train(self, expert_data):
         batch = random.sample(expert_data, self.training_batch_size)
-        print(batch[0])
+        # print(batch[0])
         states = torch.stack([x[0] for x in batch])
         means_teacher = torch.stack([x[1] for x in batch])
 
-        fake_std = torch.from_numpy(np.array([0]*len(means_teacher[0]))) # for deterministic
+        fake_std = torch.from_numpy(np.array([1e-6]*len(means_teacher[0]))) # for deterministic
         stds_teacher = torch.stack([fake_std for x in batch])
 
         means_student = self.policy.mean_action(states)

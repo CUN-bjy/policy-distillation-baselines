@@ -53,7 +53,7 @@ class AgentCollection:
         for memory, policy in zip(memories, self.policies):
             batch = memory.sample()
             batched_state = np.array(batch.state).reshape(-1, policy.env.observation_space.shape[0])
-            states = torch.from_numpy(batched_state).to(torch.double).to('cpu')
+            states = torch.from_numpy(batched_state).to(torch.float).to('cpu')
             act_dist = torch.from_numpy(policy.predict(states, deterministic=deterministic)[0])
             dataset += [(state, act_dist) for state, act_dist in zip(states, act_dist)]
         return dataset, teacher_average_reward

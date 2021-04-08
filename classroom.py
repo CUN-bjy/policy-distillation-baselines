@@ -137,7 +137,7 @@ def sample_generator(env, model, render=True, min_batch_size=10000,id_=0):
                 min_reward = min(episode_rewards)
                 max_reward = max(episode_rewards)
             except Exception as e:
-                print(e)
+                print("[sample_generator] %s"%e)
     except KeyboardInterrupt:
         pass
     env.close()
