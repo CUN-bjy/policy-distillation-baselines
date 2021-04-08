@@ -14,9 +14,7 @@ STATUS : [`IN PROGRESS`](https://github.com/CUN-bjy/policy-distillation-baseline
 
 
 
-## Manuals
-
-### Installation
+## Installation
 
 ```bash
 git clone https://github.com/CUN-bjy/policy-distillation-baselines.git
@@ -32,7 +30,7 @@ With every moment of using this package, you should source the `venv`. plz  `sou
 
 
 
-### Enjoy a Trained Agent
+## Enjoy a Trained Agent
 
 ```bash
 python classroom.py --algo algo_name --env env_id
@@ -45,13 +43,13 @@ see the details [link](https://github.com/DLR-RM/rl-baselines3-zoo#enjoy-a-train
 
 
 
-### Policy Distillation
+## Policy Distillation
 
 Distillation from trained teacher agent to pure student agent.
 
 *(I only tested on TD3, AntBulletEnv-v0 environment  so that I cannot not sure running other algorithms.* 
 
-***PR is wellcome**!)*
+**PR is wellcome**!)
 
 ```bash
 python policy_distillation.py
