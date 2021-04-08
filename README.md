@@ -1,4 +1,4 @@
-# policy-distillation-for-control
+# policy-distillation-baselines
 
 Pytorch Implementation of Policy Distillation for control, which has well-trained teachers via [stable_baselines3](https://github.com/DLR-RM/stable-baselines3).
 
@@ -43,3 +43,4 @@ STATUS : [`IN PROGRESS`]()
 
 [4] [DLR-RM/rl-trained-agents](https://github.com/DLR-RM/rl-trained-agents)
 
+[5] [DLR-RM/stable-baselines3](https://github.com/DLR-RM/stable-baselines3)
