@@ -14,6 +14,10 @@ STATUS : [`IN PROGRESS`](https://github.com/CUN-bjy/policy-distillation-baseline
 
 
 
+![](./docs/pd_baselines_figures-Page-2.svg)
+
+
+
 ## Installation
 
 ```bash
@@ -39,7 +43,7 @@ python classroom.py --algo algo_name --env env_id
 
 You can just play by `python classroom.py`, default by model is `td3`, env is `AntBulletEnv-v0 `.
 
-see the details [link](https://github.com/DLR-RM/rl-baselines3-zoo#enjoy-a-trained-agent)
+See the details on this [link](https://github.com/DLR-RM/rl-baselines3-zoo#enjoy-a-trained-agent).
 
 
 
