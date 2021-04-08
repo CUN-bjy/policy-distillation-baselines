@@ -129,7 +129,7 @@ if __name__ == '__main__':
                         help='per-iteration batch size for student (default: 1000)')
     parser.add_argument('--sample-interval', type=int, default=10, metavar='N',
                         help='frequency to update expert data (default: 10)')
-    parser.add_argument('--testing-batch-size', type=int, default=10000, metavar='N',
+    parser.add_argument('--testing-batch-size', type=int, default=5000, metavar='N',
                         help='batch size for testing student policy (default: 10000)')
     parser.add_argument('--num-student-episodes', type=int, default=1000, metavar='N',
                         help='num of teacher training episodes (default: 1000)')

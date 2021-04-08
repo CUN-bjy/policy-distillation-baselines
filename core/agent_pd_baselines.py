@@ -73,14 +73,13 @@ class AgentCollection:
             state = env.reset()
             reward_episode = 0
 
-            for t in range(10000):
+            for t in range(1000):
                 state_var = tensor(state).unsqueeze(0)
-                print(state_var)
-                action = policy.mean_action(state_var.to(torch.float)).detach()
+                with torch.no_grad():
+                    action = policy.mean_action(state_var.to(torch.float))[0].numpy()
                 next_state, reward, done, _ = env.step(action)
                 reward_episode += reward
 
-                print(action)
                 mask = 0 if done else 1
 
                 memory.push(state, action, mask, next_state, reward)
@@ -98,6 +97,9 @@ class AgentCollection:
             total_reward += reward_episode
             min_reward = min(min_reward, reward_episode)
             max_reward = max(max_reward, reward_episode)
+            print("reward_episode: %f"%reward_episode)
+            print("num_steps: %d"%num_steps)
+
 
         log['num_steps'] = num_steps
         log['num_episodes'] = num_episodes
