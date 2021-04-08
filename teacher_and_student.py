@@ -62,62 +62,14 @@ class Student(object):
         average_reward = np.array(rewards).mean()
         return average_reward
 
-    def npg_train(self, expert_data):
-        batch = random.sample(expert_data, self.training_batch_size)
-        states = torch.stack([x[0] for x in batch])
-        means_teacher = torch.stack([x[1] for x in batch])
-        stds_teacher = torch.stack([x[2] for x in batch])
-        means_student = self.policy.mean_action(states)
-        stds_student = self.policy.get_std(states)
 
-        def _fvp(states, damping=1e-2):
-            def __fvp(vector, damping=damping):
-                pi = self.policy(Variable(states))
-                pi_detach = detach_distribution(pi)
-                kl = torch.mean(kl_divergence(pi_detach, pi))
-                grads = torch.autograd.grad(kl, self.policy.parameters(), create_graph=True)
-                flat_grad_kl = torch.cat([grad.view(-1) for grad in grads])
+class Teacher(object):
+    def __init__(self, envs, policies, args):
+        self.envs = envs
+        self.policies = policies
+        self.expert_batch_size = args.sample_batch_size
+        self.agents = AgentCollection(self.envs, self.policies, 'cpu', running_state=None, render=args.render,
+                                      num_agents=args.agent_count, num_parallel_workers=args.num_workers)
 
-                kl_v = (flat_grad_kl * vector).sum()
-                grads = torch.autograd.grad(kl_v, self.policy.parameters())
-                flat_grad_grad_kl = torch.cat([grad.view(-1) for grad in grads])
-
-                return flat_grad_grad_kl + vector * damping
-
-            return __fvp
-
-        if self.loss_metric == 'kl':
-            loss = get_kl([means_teacher, stds_teacher], [means_student, stds_student])
-        elif self.loss_metric == 'wasserstein':
-            loss = get_wasserstein([means_teacher, stds_teacher], [means_student, stds_student])
-        grad = torch.autograd.grad(loss, self.policy.parameters(), create_graph=True)
-        grad = flat(grad).detach()
-
-        fvp = _fvp(states, damping=1e-2)
-        stepdir = cg(fvp, grad, 10)
-        shs = 0.5 * (stepdir * fvp(stepdir)).sum(0, keepdim=True)
-        lm = torch.sqrt(shs / 1e-2)
-        fullstep = stepdir / lm[0]
-        prev_params = get_flat_params_from(self.policy)
-        updated_params = prev_params - fullstep
-        set_flat_params_to(self.policy, updated_params)
-
-        return loss
-
-def cg(mvp, b, nsteps, residual_tol=1e-10):
-    x = torch.zeros(b.size())
-    r = b.clone()
-    p = b.clone()
-    rdotr = torch.dot(r, r)
-    for i in range(nsteps):
-        _mvp = mvp(p)
-        alpha = rdotr / torch.dot(p, _mvp)
-        x += alpha * p
-        r -= alpha * _mvp
-        new_rdotr = torch.dot(r, r)
-        betta = new_rdotr / rdotr
-        p = r + betta * p
-        rdotr = new_rdotr
-        if rdotr < residual_tol:
-            break
-    return x
+    def get_expert_sample(self):
+        return self.agents.get_expert_sample(self.expert_batch_size)

@@ -20,8 +20,7 @@ import gym
 from classroom import load_env_and_model, sample_generator
 
 # teacher policy & student policy
-from student import Student
-from teacher import Teacher
+from teacher_and_student import Teacher,Student
 
 
 torch.utils.backcompat.broadcast_warning.enabled = True
