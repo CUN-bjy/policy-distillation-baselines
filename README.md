@@ -16,6 +16,8 @@ STATUS : [`IN PROGRESS`](https://github.com/CUN-bjy/policy-distillation-baseline
 
 ![](./docs/pd_baselines_figures-Page-2.svg)
 
+#### [`ZOOM`](https://raw.githubusercontent.com/CUN-bjy/policy-distillation-baselines/main/docs/pd_baselines_figures-Page-2.svg)
+
 
 
 ## Installation
