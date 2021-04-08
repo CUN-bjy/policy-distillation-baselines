@@ -4,7 +4,7 @@
 # Autor : Junyeob Baek, wnsdlqjtm@naver.com
 # ---------------------------------------------
 
-import os, sys
+import os, sys, argparse
 
 import torch as th
 import yaml
@@ -151,10 +151,18 @@ def sample_generator(env, model, render=True, min_batch_size=10000,id_=0):
 
 if __name__ == "__main__":
 
+    # arguments setting
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--env", help="environment ID", type=str, default='AntBulletEnv-v0')
+    parser.add_argument("--algo", help="RL Algorithm", default="td3", type=str, required=False, choices=list(ALGOS.keys()))
+    parser.add_argument("-f", "--folder", help="Log folder", type=str, default="rl-trained-agents")
+    parser.add_argument("-n", "--n-timesteps", help="number of timesteps", default=1000, type=int)
+    args = parser.parse_args()
+
     # key parameters
-    env_id = 'AntBulletEnv-v0'
-    algo = 'td3'
-    folder = "rl-trained-agents"
+    env_id = args.env #'AntBulletEnv-v0'
+    algo = args.algo #'td3'
+    folder = args.folder #"rl-trained-agents"
     
     env, teacher = load_env_and_model(env_id, algo, folder)
     sample_generator(env, teacher)

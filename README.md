@@ -14,9 +14,50 @@ STATUS : [`IN PROGRESS`](https://github.com/CUN-bjy/policy-distillation-baseline
 
 
 
-### [Basic Concept]
+## Manuals
 
-<img src="concept.jpg" height="550">
+### Installation
+
+```bash
+git clone https://github.com/CUN-bjy/policy-distillation-baselines.git
+cd policy-distillation-baselines
+virtualenv venv
+source venv/bin/active
+venv/bin/pip install -r requirements.txt
+```
+
+You don't need to use virtual environment but recommended.
+
+With every moment of using this package, you should source the `venv`. plz  `source venv/bin/active`.
+
+
+
+### Enjoy a Trained Agent
+
+```bash
+python classroom.py --algo algo_name --env env_id
+# example) python classroom.py --algo td3 --env AntBulletEnv-v0
+```
+
+You can just play by `python classroom.py`, default by model is `td3`, env is `AntBulletEnv-v0 `.
+
+see the details [link](https://github.com/DLR-RM/rl-baselines3-zoo#enjoy-a-trained-agent)
+
+
+
+### Policy Distillation
+
+Distillation from trained teacher agent to pure student agent.
+
+*(I only tested on TD3, AntBulletEnv-v0 environment  so that I cannot not sure running other algorithms.* 
+
+***PR is wellcome**!)*
+
+```bash
+python policy_distillation.py
+```
+
+
 
 
 
@@ -35,12 +76,6 @@ STATUS : [`IN PROGRESS`](https://github.com/CUN-bjy/policy-distillation-baseline
 }
 ```
 
-
-
 [2] [Mee321/policy-distillation](https://github.com/Mee321/policy-distillation)
 
-[3] [DLR-RM/rl-baselines3-zoo](https://github.com/DLR-RM/rl-baselines3-zoo)
-
-[4] [DLR-RM/rl-trained-agents](https://github.com/DLR-RM/rl-trained-agents)
-
-[5] [DLR-RM/stable-baselines3](https://github.com/DLR-RM/stable-baselines3)
+[3] [DLR-RM/stable-baselines3](https://github.com/DLR-RM/stable-baselines3) / [DLR-RM/rl-baselines3-zoo](https://github.com/DLR-RM/rl-baselines3-zoo) / [DLR-RM/rl-trained-agents](https://github.com/DLR-RM/rl-trained-agents)
