@@ -5,15 +5,14 @@
 # ---------------------------------------------
 
 import gym
-from core.models import *
+from utils.models import *
 from torch.optim import Adam, SGD
 import torch
 from torch.autograd import Variable
 import random
-from utils2.math import get_wasserstein, get_kl
-from core.agent_pd_baselines import AgentCollection
+from utils.math import get_wasserstein, get_kl
+from utils.agent_pd_baselines import AgentCollection
 import numpy as np
-from utils.torch import *
 from copy import deepcopy
 
 from classroom import load_env_and_model

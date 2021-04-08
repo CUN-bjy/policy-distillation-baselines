@@ -30,10 +30,10 @@ from stable_baselines3.common.vec_env.obs_dict_wrapper import ObsDictWrapper
 from torch import nn as nn  # noqa: F401
 
 # Register custom envs
-import utils3.import_envs  # noqa: F401 pytype: disable=import-error
-from utils3.callbacks import SaveVecNormalizeCallback, TrialEvalCallback
-from utils3.hyperparams_opt import HYPERPARAMS_SAMPLER
-from utils3.utils import ALGOS, get_callback_list, get_latest_run_id, get_wrapper_class, linear_schedule
+import utils2.import_envs  # noqa: F401 pytype: disable=import-error
+from utils2.callbacks import SaveVecNormalizeCallback, TrialEvalCallback
+from utils2.hyperparams_opt import HYPERPARAMS_SAMPLER
+from utils2.utils import ALGOS, get_callback_list, get_latest_run_id, get_wrapper_class, linear_schedule
 
 
 class ExperimentManager(object):

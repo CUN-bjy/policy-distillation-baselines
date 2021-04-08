@@ -4,8 +4,8 @@
 # Autor : Junyeob Baek, wnsdlqjtm@naver.com
 # ---------------------------------------------
 
-from utils2.replay_memory import Memory
-from utils2.torch import *
+from utils.replay_memory import Memory
+from utils.torch import *
 from classroom import sample_generator
 
 class AgentCollection:

@@ -9,7 +9,7 @@ from stable_baselines3 import DDPG, DQN, SAC, TD3
 from stable_baselines3.common.noise import NormalActionNoise, OrnsteinUhlenbeckActionNoise
 from torch import nn as nn
 
-from utils3 import linear_schedule
+from utils2 import linear_schedule
 
 
 def sample_ppo_params(trial: optuna.Trial) -> Dict[str, Any]:

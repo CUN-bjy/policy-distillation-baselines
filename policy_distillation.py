@@ -13,9 +13,7 @@ import scipy.optimize
 
 # deeplearning utils
 from tensorboardX import SummaryWriter
-from core.models import *
-from core.agent_ray_pd import AgentCollection
-from utils.utils import *
+from utils.models import *
 
 # LDE utils
 import gym
@@ -99,7 +97,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Policy distillation')
 
     # Network, env, seed
-    parser.add_argument('--hidden-size', type=int, default=64,
+    parser.add_argument('--hidden-size', type=int, default=400,
                         help='number of hidden units per layer')
     parser.add_argument('--num-layers', type=int, default=2,
                         help='number of hidden layers')
@@ -121,17 +119,17 @@ if __name__ == '__main__':
                         help='number of workers for parallel computing')
 
     # For Student policy
-    parser.add_argument('--lr', type=float, default=1e-3, metavar='G',
+    parser.add_argument('--lr', type=float, default=2e-4, metavar='G',
                         help='adam learnig rate (default: 1e-3)')
-    parser.add_argument('--test-interval', type=int, default=20, metavar='N',
+    parser.add_argument('--test-interval', type=int, default=100, metavar='N',
                         help='interval between training status logs (default: 10)')
     parser.add_argument('--student-batch-size', type=int, default=1000, metavar='N',
                         help='per-iteration batch size for student (default: 1000)')
-    parser.add_argument('--sample-interval', type=int, default=100, metavar='N',
+    parser.add_argument('--sample-interval', type=int, default=500, metavar='N',
                         help='frequency to update expert data (default: 10)')
     parser.add_argument('--testing-batch-size', type=int, default=5000, metavar='N',
                         help='batch size for testing student policy (default: 10000)')
-    parser.add_argument('--num-student-episodes', type=int, default=1000, metavar='N',
+    parser.add_argument('--num-student-episodes', type=int, default=10000, metavar='N',
                         help='num of teacher training episodes (default: 1000)')
     parser.add_argument('--loss-metric', type=str, default='kl',
                         help='metric to build student objective')

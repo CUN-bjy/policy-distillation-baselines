@@ -3,7 +3,7 @@
 import torch
 import torch.autograd as autograd
 import torch.nn as nn
-from utils2.math import *
+from utils.math import *
 from torch.distributions import Categorical, Normal
 import torch.nn.functional as F
 from collections import OrderedDict
