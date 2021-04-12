@@ -17,11 +17,11 @@ from utils.models import *
 
 # LDE utils
 import gym
-from classroom import load_env_and_model, sample_generator
+from utils.agent_pd_baselines import load_env_and_model
 from utils2 import ALGOS
 
 # teacher policy & student policy
-from teacher_and_student import Teacher,Student
+from classroom import Teacher,Student
 
 
 torch.utils.backcompat.broadcast_warning.enabled = True
@@ -35,8 +35,6 @@ torch.utils.backcompat.keepdim_warning.enabled = True
 '''
 
 def main(args):
-    # ray.init(num_cpus=args.num_workers, num_gpus=1)
-
     # policy and envs for sampling
     np.random.seed(args.seed)
     torch.manual_seed(args.seed)
@@ -56,7 +54,7 @@ def main(args):
     ##########################################
 
     teachers = Teacher(envs, teacher_policies, args)
-    student = Student(envs[0],args)
+    student = Student(args)
     print('Training student policy...')
     time_beigin = time()
     exp_id = '%s_%s_%s'%(args.env, args.algo, time_beigin)
@@ -68,23 +66,24 @@ def main(args):
     # train student policy
     ################################
     for iter in count(1):
+        if iter > args.num_student_episodes:
+            break
         if iter % args.sample_interval == 1:
             expert_data, expert_reward = teachers.get_expert_sample()
+        
         loss = student.train(expert_data)
-        if iter % 5 == 1: # for logging
+        if iter % (args.test_interval/10) == 0: # for logging
             writer.add_scalar('{} loss'.format(args.loss_metric), loss.data, iter)
             print('Itr {} {} loss: {:.2f}'.format(iter, args.loss_metric, loss.data))
         if iter % args.test_interval == 0:
-            student.save('{}/student_{}.pkl'.format(path_to_save, iter))
             average_reward = student.test()
+            student.save('{}/student_{}_{:.2f}.pkl'.format(path_to_save, iter, average_reward))
             writer.add_scalar('Students_average_reward', average_reward, iter)
             writer.add_scalar('teacher_reward', expert_reward, iter)
             print("Students_average_reward: {:.3f} (teacher_reward:{:3f})".format(average_reward, expert_reward))
-        if iter > args.num_student_episodes:
-            break
+
     time_train = time() - time_beigin
     print('Training student policy finished, using time {}'.format(time_train))
-    # ray.shutdown()
 
 
 if __name__ == '__main__':
@@ -102,7 +101,7 @@ if __name__ == '__main__':
 
 
     # Network, env, seed
-    parser.add_argument('--hidden-size', type=int, default=400,
+    parser.add_argument('--hidden-size', type=int, default=64,
                         help='number of hidden units per layer')
     parser.add_argument('--num-layers', type=int, default=2,
                         help='number of hidden layers')
@@ -118,11 +117,9 @@ if __name__ == '__main__':
                         help='expert batch size for each teacher (default: 10000)')
     parser.add_argument('--render', action='store_true',
                         help='render the environment')
-    parser.add_argument('--num-workers', type=int, default=3,
-                        help='number of workers for parallel computing')
 
     # For Student policy
-    parser.add_argument('--lr', type=float, default=5e-4, metavar='G',
+    parser.add_argument('--lr', type=float, default=1e-3, metavar='G',
                         help='adam learnig rate (default: 1e-3)')
     parser.add_argument('--test-interval', type=int, default=500, metavar='N',
                         help='interval between training status logs (default: 10)')
@@ -132,10 +129,11 @@ if __name__ == '__main__':
                         help='frequency to update expert data (default: 10)')
     parser.add_argument('--testing-batch-size', type=int, default=5000, metavar='N',
                         help='batch size for testing student policy (default: 10000)')
-    parser.add_argument('--num-student-episodes', type=int, default=50000, metavar='N',
+    parser.add_argument('--num-student-episodes', type=int, default=10000, metavar='N',
                         help='num of teacher training episodes (default: 1000)')
     parser.add_argument('--loss-metric', type=str, default='kl',
                         help='metric to build student objective')
+
     args = parser.parse_args()
 
 
