@@ -1,5 +1,6 @@
 *.pyc
 venv/
 __pycache__/
-rl-trained_agents/
+rl-trained-agents/
 exp_data/
+distilled-agents/

@@ -127,7 +127,7 @@ def sample_generator(env, model, render=True, min_batch_size=10000,id_=0):
                 obs = next_state
 
                 if render: 
-                    env.render("human")
+                    env.render()
                 if done:
                     break
             # log stats
@@ -165,4 +165,4 @@ if __name__ == "__main__":
     folder = args.folder #"rl-trained-agents"
     
     env, teacher = load_env_and_model(env_id, algo, folder)
-    sample_generator(env, teacher)
+    sample_generator(env, teacher, min_batch_size=1000)

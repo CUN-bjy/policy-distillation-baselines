@@ -10,17 +10,12 @@ from classroom import sample_generator
 
 class AgentCollection:
 
-    def __init__(self, envs, policies, device, custom_reward=None,
-                 mean_action=False, render=False, running_state=None, num_agents=1, num_parallel_workers=1):
+    def __init__(self, envs, policies, device, mean_action=False, render=False,  num_agents=1):
         self.envs = envs
         self.policies = policies
         self.device = device
-        self.custom_reward = custom_reward
         self.mean_action = mean_action
-        #self.running_state = running_state
-        self.running_state = None
         self.render = render
-        self.num_parallel_workers = num_parallel_workers
         self.num_agents = num_agents
         self.num_teachers = len(policies)
 

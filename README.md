@@ -25,6 +25,7 @@ STATUS : [`IN PROGRESS`](https://github.com/CUN-bjy/policy-distillation-baseline
 ```bash
 git clone https://github.com/CUN-bjy/policy-distillation-baselines.git
 cd policy-distillation-baselines
+git submodule update --init
 virtualenv venv
 source venv/bin/active
 venv/bin/pip install -r requirements.txt

@@ -62,6 +62,10 @@ def main(args):
     student = Student(envs[0],args)
     print('Training student policy...')
     time_beigin = time()
+    exp_id = '%s_%s_%s'%(env_id, algo, time_beigin)
+    path_to_save = '%s/distilled-agents/%s'%(os.getcwd(),exp_id)
+    if not os.path.exists(path_to_save): os.mkdir(path_to_save)
+
 
     ################################
     # train student policy
@@ -76,6 +80,7 @@ def main(args):
         writer.add_scalar('{} loss'.format(args.loss_metric), loss.data, iter)
         print('Itr {} {} loss: {:.2f}'.format(iter, args.loss_metric, loss.data))
         if iter % args.test_interval == 0:
+            student.save('{}/student_{}.pkl'.format(path_to_save, iter))
             average_reward = student.test()
             writer.add_scalar('Students_average_reward', average_reward, iter)
             writer.add_scalar('teacher_reward', expert_reward, iter)
@@ -120,11 +125,11 @@ if __name__ == '__main__':
     # For Student policy
     parser.add_argument('--lr', type=float, default=2e-4, metavar='G',
                         help='adam learnig rate (default: 1e-3)')
-    parser.add_argument('--test-interval', type=int, default=100, metavar='N',
+    parser.add_argument('--test-interval', type=int, default=500, metavar='N',
                         help='interval between training status logs (default: 10)')
     parser.add_argument('--student-batch-size', type=int, default=1000, metavar='N',
                         help='per-iteration batch size for student (default: 1000)')
-    parser.add_argument('--sample-interval', type=int, default=500, metavar='N',
+    parser.add_argument('--sample-interval', type=int, default=2500, metavar='N',
                         help='frequency to update expert data (default: 10)')
     parser.add_argument('--testing-batch-size', type=int, default=5000, metavar='N',
                         help='batch size for testing student policy (default: 10000)')
