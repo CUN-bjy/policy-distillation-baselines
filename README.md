@@ -4,7 +4,7 @@ Pytorch Implementation of Policy Distillation for control, which has well-traine
 
 
 
-STATUS : [`IN PROGRESS`](https://github.com/CUN-bjy/policy-distillation-baselines/projects)
+STATUS : [`DONE`](https://github.com/CUN-bjy/policy-distillation-baselines/projects)
 
 
 
@@ -12,7 +12,14 @@ STATUS : [`IN PROGRESS`](https://github.com/CUN-bjy/policy-distillation-baseline
 
 > *This repository is based on [Mee321/policy-distillation](https://github.com/Mee321/policy-distillation) and integrated with [DLR-RM/rl-baselines3-zoo](https://github.com/DLR-RM/rl-baselines3-zoo) environment.*
 
+## Demonstration
 
+#### Trained Agent(left) and Distilled Agent(right), see more [demo](https://github.com/CUN-bjy/policy-distillation-baselines/issues/3#issuecomment-817730173)..
+![teacher](https://user-images.githubusercontent.com/26274945/114387212-24a00580-9bcd-11eb-868b-a911a68138d6.gif)![student_6000_3259](https://user-images.githubusercontent.com/26274945/114388097-3930cd80-9bce-11eb-8459-621c3a6423e2.gif)
+
+
+
+## Overview
 
 ![](./docs/pd_baselines_figures-Page-2.svg)
 
@@ -51,14 +58,14 @@ python playground.py --mode teacher --algo algo_name --env env_name
 See the details below!
 
 ```bash
-usage: playground.py [-h] -m {teacher,alumni} [--env ENV]
+usage: playground.py [-h] -m {teacher,student} [--env ENV]
                      [--algo {a2c,ddpg,dqn,ppo,her,sac,td3,qrdqn,tqc}]
                      [-f FOLDER] [-p PATH_TO_STUDENT] [--render RENDER]
                      [--testing-batch-size N]
 
 optional arguments:
   -h, --help            show this help message and exit
-  -m {teacher,alumni}, --mode {teacher,alumni}
+  -m {teacher,student}, --mode {teacher,student}
                         playground mode
   --env ENV             environment ID
   --algo {a2c,ddpg,dqn,ppo,her,sac,td3,qrdqn,tqc}
@@ -84,9 +91,7 @@ Distillation from trained teacher agent to pure student agent.
 python policy_distillation.py --algo algo_name --env env_name 
 ```
 
-> *I only tested on TD3, AntBulletEnv-v0(default) environment  so I cannot not sure running other algorithms.*
->
-> **PR is wellcome**!
+> *I only tested on TD3, AntBulletEnv-v0(default) environment  so I cannot not sure that it work on other algorithms.* **PR is wellcome**!
 
 See the details below!
 
@@ -140,12 +145,12 @@ optional arguments:
 
 ## Play a Distilled Agent
 
-If you want to play a distilled_agent that we call `alumni`,
+If you want to play a distilled_agent that we call `trained_student`,
 
 ```bash
-python playground.py --mode alumni -p path-to-student
+python playground.py --mode student -p path-to-student
 # For example,
-# python playground.py --mode alumni -p python playground.py --mode alumni -p '/home/user/git_storage/policy-distillation-for-control/distilled-agents/AntBulletEnv-v0_td3_1618214113.531515/student_7500_3205.61.pkl' 
+# python playground.py --mode student -p '/home/user/git_storage/policy-distillation-for-control/distilled-agents/AntBulletEnv-v0_td3_1618214113.531515/student_7500_3205.61.pkl' 
 # (path to ckpoint! drag & drop the file on bash terminal)
 # if you changed the algorithm or environment from default, you also shold change.
 ```

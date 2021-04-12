@@ -71,7 +71,7 @@ class Teacher(object):
         return self.agents.get_expert_sample(self.expert_batch_size)
 
 
-class Alumni(object):
+class TrainedStudent(object):
     def __init__(self, args, optimizer=None):
         self.env, _ = load_env_and_model(args.env, args.algo, args.folder)
         self.testing_batch_size = args.testing_batch_size
