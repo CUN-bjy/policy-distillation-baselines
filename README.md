@@ -37,16 +37,42 @@ With every moment of using this package, you should source the `venv`. plz  `sou
 
 
 
-## Enjoy a Trained Agent
+## Play a Trained Agent
+
+If you want to play trained_agent from stable_baselines3,
 
 ```bash
-python classroom.py --algo algo_name --env env_id
-# example) python classroom.py --algo td3 --env AntBulletEnv-v0
+python playground.py --mode teacher --algo algo_name --env env_name
+# For example,
+# python playground.py --mode teacher --algo td3 --env AntBulletEnv-v0 (default)
+# python playground.py --mode teacher --algo sac --env Pendulum-v0
 ```
 
-You can just play by `python classroom.py`, default by model is `td3`, env is `AntBulletEnv-v0 `.
+See the details below!
 
-See the details on this [link](https://github.com/DLR-RM/rl-baselines3-zoo#enjoy-a-trained-agent).
+```bash
+usage: playground.py [-h] -m {teacher,alumni} [--env ENV]
+                     [--algo {a2c,ddpg,dqn,ppo,her,sac,td3,qrdqn,tqc}]
+                     [-f FOLDER] [-p PATH_TO_STUDENT] [--render RENDER]
+                     [--testing-batch-size N]
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -m {teacher,alumni}, --mode {teacher,alumni}
+                        playground mode
+  --env ENV             environment ID
+  --algo {a2c,ddpg,dqn,ppo,her,sac,td3,qrdqn,tqc}
+                        RL Algorithm
+  -f FOLDER, --folder FOLDER
+                        well trained teachers storage
+  -p PATH_TO_STUDENT, --path-to-student PATH_TO_STUDENT
+                        well trained students sotrage
+  --render RENDER       render the environment(default: true)
+  --testing-batch-size N
+                        batch size for testing student policy (default: 1000)
+```
+
+
 
 
 
@@ -54,15 +80,77 @@ See the details on this [link](https://github.com/DLR-RM/rl-baselines3-zoo#enjoy
 
 Distillation from trained teacher agent to pure student agent.
 
-*(I only tested on TD3, AntBulletEnv-v0 environment  so that I cannot not sure running other algorithms.* 
+```bash
+python policy_distillation.py --algo algo_name --env env_name 
+```
 
-**PR is wellcome**!)
+> *I only tested on TD3, AntBulletEnv-v0(default) environment  so I cannot not sure running other algorithms.*
+>
+> **PR is wellcome**!
+
+See the details below!
 
 ```bash
-python policy_distillation.py
+usage: policy_distillation.py [-h] [--env ENV] [-f FOLDER]
+                              [--algo {a2c,ddpg,dqn,ppo,her,sac,td3,qrdqn,tqc}]
+                              [--hidden-size HIDDEN_SIZE]
+                              [--num-layers NUM_LAYERS] [--seed N]
+                              [--agent-count N] [--num-teachers N]
+                              [--sample-batch-size N] [--render] [--lr G]
+                              [--test-interval N] [--student-batch-size N]
+                              [--sample-interval N] [--testing-batch-size N]
+                              [--num-student-episodes N]
+                              [--loss-metric LOSS_METRIC]
+
+Policy distillation
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --env ENV             environment ID
+  -f FOLDER, --folder FOLDER
+                        Log folder
+  --algo {a2c,ddpg,dqn,ppo,her,sac,td3,qrdqn,tqc}
+                        RL Algorithm
+  --hidden-size HIDDEN_SIZE
+                        number of hidden units per layer
+  --num-layers NUM_LAYERS
+                        number of hidden layers
+  --seed N              random seed (default: 1)
+  --agent-count N       number of agents (default: 100)
+  --num-teachers N      number of teacher policies (default: 1)
+  --sample-batch-size N
+                        expert batch size for each teacher (default: 10000)
+  --render              render the environment
+  --lr G                adam learnig rate (default: 1e-3)
+  --test-interval N     interval between training status logs (default: 10)
+  --student-batch-size N
+                        per-iteration batch size for student (default: 1000)
+  --sample-interval N   frequency to update expert data (default: 10)
+  --testing-batch-size N
+                        batch size for testing student policy (default: 10000)
+  --num-student-episodes N
+                        num of teacher training episodes (default: 1000)
+  --loss-metric LOSS_METRIC
+                        metric to build student objective
 ```
 
 
+
+
+
+## Play a Distilled Agent
+
+If you want to play a distilled_agent that we call `alumni`,
+
+```bash
+python playground.py --mode alumni -p path-to-student
+# For example,
+# python playground.py --mode alumni -p python playground.py --mode alumni -p '/home/user/git_storage/policy-distillation-for-control/distilled-agents/AntBulletEnv-v0_td3_1618214113.531515/student_7500_3205.61.pkl' 
+# (path to ckpoint! drag & drop the file on bash terminal)
+# if you changed the algorithm or environment from default, you also shold change.
+```
+
+See the details on [above](https://github.com/CUN-bjy/policy-distillation-baselines#play-a-trained-agent)!
 
 
 
