@@ -20,7 +20,7 @@ Trained agent used **400 x 300** parameters, while distilled agent used **64 x 6
 
 And it just takes 6,000 iteration to receive 100% of performance(about 100 seconds on intel i7).
 
-![teacher](https://user-images.githubusercontent.com/26274945/114387212-24a00580-9bcd-11eb-868b-a911a68138d6.gif)![student_6000_3259](https://user-images.githubusercontent.com/26274945/114388097-3930cd80-9bce-11eb-8459-621c3a6423e2.gif)
+![teacher_text_cut](https://user-images.githubusercontent.com/26274945/114413212-bec17700-9be8-11eb-9e24-889d1a629d8d.gif)![pd_baselines_compact](https://user-images.githubusercontent.com/26274945/114423908-98a0d480-9bf2-11eb-85b0-f3e3c20d92ae.gif)
 
 
 
