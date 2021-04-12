@@ -15,6 +15,11 @@ STATUS : [`DONE`](https://github.com/CUN-bjy/policy-distillation-baselines/proje
 ## Demonstration
 
 #### Trained Agent(left) and Distilled Agent(right), see more [demo](https://github.com/CUN-bjy/policy-distillation-baselines/issues/3#issuecomment-817730173)..
+
+Trained agent used **400 x 300** parameters, while distilled agent used **64 x 64** parameters.
+
+And it just takes 6,000 iteration to receive 100% of performance(about 100 seconds on intel i7).
+
 ![teacher](https://user-images.githubusercontent.com/26274945/114387212-24a00580-9bcd-11eb-868b-a911a68138d6.gif)![student_6000_3259](https://user-images.githubusercontent.com/26274945/114388097-3930cd80-9bce-11eb-8459-621c3a6423e2.gif)
 
 
