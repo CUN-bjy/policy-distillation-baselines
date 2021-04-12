@@ -20,11 +20,7 @@ from classroom import load_env_and_model
 
 class Student(object):
     def __init__(self, env, args, optimizer=None):
-
-        env_id = 'AntBulletEnv-v0'
-        algo = 'td3'
-        folder = "rl-trained-agents"
-        self.env, _ = load_env_and_model(env_id, algo, folder)
+        self.env, _ = load_env_and_model(args.env, args.algo, args.folder)
 
         num_inputs = self.env.observation_space.shape[0]
         num_actions = self.env.action_space.shape[0]
@@ -34,7 +30,7 @@ class Student(object):
         self.policy = Policy(num_inputs, num_actions, hidden_sizes=(args.hidden_size,) * args.num_layers)
         self.agents = AgentCollection([self.env], [self.policy], 'cpu', render=args.render, num_agents=1)
         if not optimizer:
-            self.optimizer = SGD(self.policy.parameters(), lr=args.lr)
+            self.optimizer = Adam(self.policy.parameters(), lr=args.lr)
 
     def train(self, expert_data):
         batch = random.sample(expert_data, self.training_batch_size)
