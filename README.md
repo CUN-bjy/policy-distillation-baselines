@@ -96,7 +96,7 @@ Distillation from trained teacher agent to pure student agent.
 python policy_distillation.py --algo algo_name --env env_name 
 ```
 
-> *I only tested on TD3, AntBulletEnv-v0(default) environment  so I cannot not sure that it work on other algorithms.* **PR is wellcome**!
+> *I only tested on TD3, AntBulletEnv-v0(default) environment  so I cannot not sure that it work on other algorithms.* **PR is welcome**!
 
 See the details below!
 
